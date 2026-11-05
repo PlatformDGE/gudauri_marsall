@@ -84,7 +84,7 @@ h1,h2,h3{margin:0}
 .seg{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;flex-wrap:wrap}
 .seg button{border:0;background:transparent;border-radius:8px;padding:6px 11px;color:var(--muted);font-weight:500}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgb(0 0 0 / .14)}
-.add{margin-left:auto;background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:9px 15px;font-weight:600}
+.add{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:9px 15px;font-weight:600}
 .chip{border:1px solid color-mix(in srgb,var(--c) 40%,transparent);background:color-mix(in srgb,var(--c) 13%,var(--surface));color:color-mix(in srgb,var(--c) 72%,var(--ink));border-radius:999px;padding:3px 10px;font-size:13px;font-weight:500;white-space:nowrap}
 button.chip[aria-pressed="true"]{background:var(--c);border-color:var(--c);color:var(--surface)}
 .chip small{font-size:12px;opacity:.8;margin-left:3px}
@@ -128,6 +128,32 @@ details.panel .inner{padding:0 14px 12px}
 .arch .name{text-decoration:line-through;color:var(--muted)}
 .log{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14px}
 .log time,.log .who{color:var(--muted);font-size:13px}
+.row.rep{grid-template-columns:50px minmax(0,1fr) auto;cursor:default}
+.row.rep:hover{background:transparent}
+.sec{display:grid;gap:8px}
+.sec-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;justify-content:space-between;padding-inline:4px}
+.sec-h h2{font-size:17px;font-weight:700}
+.sec-h span{color:var(--muted);font-size:13.5px}
+#ownerView{display:grid;gap:22px}
+#teamView{display:grid;gap:18px}
+.rcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.rc{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:grid;align-content:start}
+.rc-img{border:0;padding:0;background:var(--sunk);aspect-ratio:4/3;width:100%;display:block;cursor:zoom-in;overflow:hidden}
+.rc-img img{width:100%;height:100%;object-fit:cover;display:block}
+.rc-more{display:flex;gap:6px;padding:8px 12px 0;flex-wrap:wrap}
+.rc-more button{border:0;padding:0;width:44px;height:44px;border-radius:7px;overflow:hidden;background:var(--sunk);cursor:zoom-in}
+.rc-more img{width:100%;height:100%;object-fit:cover;display:block}
+.rc-body{padding:10px 12px 12px;display:grid;gap:4px;min-width:0}
+.rc-top{display:flex;gap:8px;justify-content:space-between;font-weight:600}
+.rc-top span{overflow-wrap:anywhere;min-width:0}
+.rc-sub{color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.rc-items{margin:2px 0 0;padding:0;list-style:none;font-size:13.5px;display:grid;gap:2px}
+.rc-edit{justify-self:start;margin-top:6px;padding:5px 10px}
+.pick{border:1px solid var(--line);border-radius:9px;max-height:210px;overflow:auto;padding:6px 10px;display:grid;gap:6px;background:var(--bg)}
+.pick label{display:flex;gap:8px;align-items:flex-start}
+.pick small{color:var(--muted);display:block}
+.add2{background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:10px;padding:9px 15px;font-weight:600}
+.add-wrap{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px}
 footer{color:var(--muted);font-size:12.5px;text-align:center}
 
 /* Dialogs */
@@ -172,7 +198,7 @@ dialog::backdrop{background:rgb(5 20 20 / .55)}
   .brand{gap:8px}
   .row{grid-template-columns:28px 44px minmax(0,1fr) auto;gap:8px;padding-inline:10px}
   .thumb{width:44px;height:44px}
-  .add{margin-left:0;width:100%}
+  .add-wrap{margin-left:0;width:100%}.add,.add2{flex:1 1 140px}
 }
 @media (prefers-reduced-motion:no-preference){.meter i{transition:width .25s ease}}
 </style>
@@ -181,7 +207,7 @@ dialog::backdrop{background:rgb(5 20 20 / .55)}
 <div class="wrap">
   <section class="hero" aria-label="Бюджет">
     <div class="hero-top">
-      <div class="brand"><img src="logo-white.svg" alt="Homes in Georgia"><span class="brand-sep"></span><div><h1>Daily Rent · Gudauri Marshall</h1><small>Покупки и бюджет квартиры</small></div></div>
+      <div class="brand"><img src="logo-white.svg" alt="Homes in Georgia"><span class="brand-sep"></span><div><h1>Daily Rent · Gudauri Marshall</h1><small id="brandSub">Покупки и бюджет квартиры</small></div></div>
       <div class="hero-actions"><span class="save" id="saveState" role="status"></span>
         <button class="ghost" id="btnBudget" type="button" hidden>Бюджет и курс</button>
         <button class="ghost" id="btnReport" type="button">Отчёт собственнику</button>
@@ -190,21 +216,26 @@ dialog::backdrop{background:rgb(5 20 20 / .55)}
     <div id="heroBody"><div class="left-label">Загружаем бюджет и список покупок…</div></div>
   </section>
   <div id="rateNeed" class="rate-need" hidden></div>
+  <div id="ownerView" hidden></div>
+  <div id="teamView" hidden>
   <div class="tools">
     <div class="tool-row">
       <div class="seg" id="segGroup" role="group" aria-label="Группировка"></div>
       <div class="seg" id="segStatus" role="group" aria-label="Статус"></div>
-      <button class="add" id="btnAdd" type="button" hidden>+ Добавить товар</button>
+      <div class="add-wrap"><button class="add2" id="btnReceipt" type="button">+ Добавить чек</button><button class="add" id="btnAdd" type="button" hidden>+ Добавить товар</button></div>
     </div>
     <div class="tool-row" id="catChips" role="group" aria-label="Группы товаров"></div>
   </div>
+  <details class="panel" id="rcPanel"><summary id="rcSum">Чеки</summary><div class="inner" id="rcList"></div></details>
   <div class="groups" id="groups"><div class="empty">Здесь появятся покупки по комнатам: статус, цена, ссылка и фото каждого товара.</div></div>
   <details class="panel arch" id="archPanel" hidden><summary id="archSum">Заменено и убрано</summary><div class="inner" id="arch"></div></details>
   <details class="panel" id="logPanel"><summary>История изменений</summary><div class="inner"><ul class="log" id="log"></ul><p style="margin:10px 0 0" id="meLine" hidden><button type="button" class="btn" id="btnName">Сменить имя в истории</button></p></div></details>
+  </div>
   <footer>Made with Claude (Anthropic) · © Homes in Georgia · Created by Irakli Kvirkvelia</footer>
 </div>
 
 <dialog id="dItem"><form class="dlg" id="fItem" novalidate></form></dialog>
+<dialog id="dReceipt"><form class="dlg" id="fReceipt" novalidate></form></dialog>
 <dialog id="dBudget"><form class="dlg" id="fBudget" novalidate></form></dialog>
 <dialog id="dReport"><div class="dlg" id="report"></div></dialog>
 <dialog id="lb"><img id="lbImg" alt="Фото товара" referrerpolicy="no-referrer"><button type="button" id="lbClose">Закрыть</button></dialog>
@@ -255,7 +286,7 @@ function compute(items,transfers){
 }
 
 let db=null,assets=null,user=null,me=null;
-let items=[],budget=null,history=[],gotItems=false,gotBudget=false,readOnly=true;
+let items=[],receipts=[],budget=null,history=[],gotItems=false,gotBudget=false,readOnly=true;
 let prefs={group:"room",status:"all",cats:[]};
 try{Object.assign(prefs,JSON.parse(localStorage.getItem("gud-prefs")||"{}"))}catch{}
 const savePrefs=()=>{try{localStorage.setItem("gud-prefs",JSON.stringify(prefs))}catch{}};
@@ -275,7 +306,16 @@ function log(text){if(!db)return;db.collection("history").add({at:new Date().toI
 const priceStr=i=>num(i.price)?(i.currency==="USD"?usd(num(i.price)):gel(num(i.price))):"без цены";
 
 /* ---------- Rendering ---------- */
-function render(){renderHero();renderTools();renderGroups();renderArch();renderLog()}
+function render(){
+  const role=load.role;
+  $("teamView").hidden=role!=="edit";
+  $("ownerView").hidden=role!=="view";
+  $("btnReport").hidden=role!=="edit";
+  $("brandSub").textContent=role==="view"?"Отчёт для собственника":"Покупки и бюджет квартиры";
+  renderHero();
+  if(role==="view")renderReport();
+  if(role==="edit"){renderTools();renderReceipts();renderGroups();renderArch();renderLog()}
+}
 function renderHero(){
   const b=$("heroBody");b.replaceChildren();
   $("btnBudget").hidden=readOnly||!db;
@@ -288,7 +328,7 @@ function renderHero(){
   need.hidden=!c.pending.length;
   if(c.pending.length){
     const sum=c.pending.reduce((s,t)=>s+num(t.usd),0);
-    need.append(h("span",{text:`${usd(sum)} ещё не в бюджете: впишите курс на день перевода, и сумма пересчитается в лари.`}));
+    need.append(h("span",{text:readOnly?`${usd(sum)} ещё не в бюджете: курс перевода пока не указан.`:`${usd(sum)} ещё не в бюджете: впишите курс на день перевода, и сумма пересчитается в лари.`}));
     if(!readOnly)need.append(h("button",{type:"button",text:"Вписать курс",onclick:openBudget}));
   }
   const scale=Math.max(c.budgetGel,c.spent+c.plan)||1;
@@ -399,6 +439,102 @@ async function renderLog(){
   ul.replaceChildren(...history.map(x=>h("li",{},h("div",{text:x.text}),h("span",{class:"who",text:`${x.by||"Участник"} · ${new Date(x.at).toLocaleString("ru-RU",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}`}))));
 }
 
+/* ---------- Receipts ---------- */
+const rcAmount=r=>num(r.amount)?(r.currency==="USD"?usd(num(r.amount)):gel(num(r.amount))):"";
+function receiptCard(r,editable){
+  const ph=r.photos||[];
+  const names=(r.items||[]).map(byId).filter(Boolean).map(i=>i.name);
+  return h("article",{class:"rc"},
+    ph.length?h("button",{type:"button",class:"rc-img","aria-label":"Открыть фото чека",onclick:()=>openLb(ph[0])},h("img",{src:photoUrl(ph[0],500),alt:"Фото чека",loading:"lazy",referrerpolicy:"no-referrer"})):null,
+    ph.length>1?h("div",{class:"rc-more"},ph.slice(1).map(id=>h("button",{type:"button","aria-label":"Открыть фото чека",onclick:()=>openLb(id)},h("img",{src:photoUrl(id,120),alt:"",loading:"lazy",referrerpolicy:"no-referrer"})))):null,
+    h("div",{class:"rc-body"},
+      h("div",{class:"rc-top"},h("span",{text:r.shop||"Чек"}),h("span",{text:rcAmount(r)})),
+      h("div",{class:"rc-sub",text:fmtDate(r.date)}),
+      names.length?h("ul",{class:"rc-items"},names.map(n=>h("li",{text:"• "+n}))):null,
+      r.note?h("div",{class:"rc-sub",text:r.note}):null,
+      editable?h("button",{type:"button",class:"btn rc-edit",text:"Изменить",onclick:()=>openReceipt(r)}):null));
+}
+const sortedReceipts=()=>[...receipts].sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+function renderReceipts(){
+  $("rcSum").textContent=`Чеки (${receipts.length})`;
+  $("rcList").replaceChildren(receipts.length?h("div",{class:"rcs"},sortedReceipts().map(r=>receiptCard(r,true))):h("div",{class:"who",style:"color:var(--muted)",text:"Чеков пока нет. Сфотографируйте чек и нажмите «Добавить чек»."}));
+}
+function openReceipt(r){
+  const isNew=!r;const base=r||{date:today(),shop:"",amount:null,currency:"GEL",photos:[],items:[],note:""};
+  form={receipt:r,isNew,photos:[...(base.photos||[])],fresh:[],removed:[],uploading:0,boxId:"rPhotos",saveId:"rSave"};
+  const f=$("fReceipt");f.replaceChildren();
+  const paid=items.filter(i=>i.status==="paid").sort((a,b)=>String(b.paidAt||"").localeCompare(String(a.paidAt||""))||num(a.order)-num(b.order));
+  const inOther=id=>receipts.find(x=>x.id!==(r&&r.id)&&(x.items||[]).includes(id));
+  const pick=paid.length?h("div",{class:"pick"},paid.map(i=>{const o=inOther(i.id);return h("label",{},h("input",{type:"checkbox",value:i.id,checked:(base.items||[]).includes(i.id),"data-pick":"1"}),h("span",{},i.name,h("small",{text:priceStr(i)+(i.paidAt?" · "+fmtDate(i.paidAt):"")+(o?` · уже в чеке «${o.shop||fmtDate(o.date)}»`:"")})))})):h("span",{class:"lbl",text:"Здесь появятся товары, отмеченные как оплаченные."});
+  const del=!isNew?h("button",{type:"button",class:"btn danger push",text:"Удалить чек",onclick:()=>{if(del.dataset.arm)deleteReceipt(r);else{del.dataset.arm="1";del.textContent="Точно удалить?"}}}):null;
+  f.append(h("h2",{text:isNew?"Новый чек":"Чек"}),
+    h("div",{class:"f"},h("span",{class:"lbl",text:"Фото чека"}),h("div",{class:"photos",id:"rPhotos"})),
+    h("div",{class:"two"},
+      h("label",{class:"f"},h("span",{text:"Дата"}),h("input",{id:"rDate",type:"date",value:base.date||today()})),
+      h("label",{class:"f"},h("span",{text:"Магазин"}),h("input",{id:"rShop",value:base.shop||"",autocomplete:"off"}))),
+    h("div",{class:"f"},h("span",{text:"Сумма чека (для сверки, из бюджета отдельно не списывается)"}),h("div",{class:"pricef"},h("input",{id:"rAmount",inputmode:"decimal",value:base.amount??"",placeholder:"0","aria-label":"Сумма чека"}),h("select",{id:"rCur","aria-label":"Валюта"},h("option",{value:"GEL",selected:base.currency!=="USD",text:"₾"}),h("option",{value:"USD",selected:base.currency==="USD",text:"$"})))),
+    h("div",{class:"f"},h("span",{class:"lbl",text:"Какие товары в этом чеке (необязательно)"}),pick),
+    h("label",{class:"f"},h("span",{text:"Заметка"}),h("textarea",{id:"rNote",rows:"2"},base.note||"")),
+    h("div",{class:"err",id:"rErr",role:"alert",hidden:true}),
+    h("div",{class:"btns"},h("button",{type:"submit",class:"btn primary",id:"rSave",text:isNew?"Добавить чек":"Сохранить"}),h("button",{type:"button",class:"btn",text:"Отмена",onclick:()=>cancelReceipt()}),del));
+  f.onsubmit=e=>{e.preventDefault();saveReceipt()};
+  renderPhotos(false);
+  $("dReceipt").showModal();
+}
+function cancelReceipt(){(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}));$("dReceipt").close()}
+$("dReceipt").addEventListener("cancel",()=>{(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}))});
+async function saveReceipt(){
+  const err=$("rErr");const fail=t=>{err.textContent=t;err.hidden=false};
+  if(!form.photos.length)return fail("Добавьте хотя бы одно фото чека.");
+  const raw=$("rAmount").value.trim();const amount=raw?num(raw):null;
+  if(raw&&!(amount>0))return fail("Сумма должна быть числом больше нуля, например 1250 или 89,90.");
+  const cur=form;const ref=db.collection("receipts").doc(cur.receipt?cur.receipt.id:undefined);
+  const data={date:$("rDate").value||today(),shop:$("rShop").value.trim(),amount,currency:$("rCur").value,photos:cur.photos,items:[...document.querySelectorAll("#fReceipt [data-pick]:checked")].map(x=>x.value),note:$("rNote").value.trim(),updatedBy:me};
+  await write(()=>ref.set(data));
+  log(`${cur.isNew?"Чек добавлен":"Чек изменён"}: ${data.shop||"без магазина"}, ${fmtDate(data.date)}${amount?", "+rcAmount(data):""}, фото: ${data.photos.length}`);
+  cur.removed.forEach(id=>assets?.delete(id).catch(()=>{}));
+  cur.fresh=[];
+  $("rcPanel").open=true;
+  $("dReceipt").close();
+}
+async function deleteReceipt(r){
+  await write(()=>db.doc("receipts/"+r.id).delete());
+  (r.photos||[]).forEach(id=>assets?.delete(id).catch(()=>{}));
+  log(`Чек удалён: ${r.shop||"без магазина"}, ${fmtDate(r.date)}`);
+  form.fresh=[];
+  $("dReceipt").close();
+}
+$("btnReceipt").onclick=()=>openReceipt(null);
+
+/* ---------- Owner report ---------- */
+function reportRow(i,c){
+  const ph=i.photos||[],link=safeLink(i.link),cat=i.cat||"other",p=num(i.price);
+  const thumb=ph.length?h("button",{type:"button",class:`thumb cat-${cat}`,"aria-label":`Фото: ${i.name}`,onclick:()=>openLb(ph[0])},h("img",{src:photoUrl(ph[0],240),alt:"",loading:"lazy",referrerpolicy:"no-referrer"})):h("div",{class:`thumb cat-${cat}`,text:catName(cat)[0]});
+  return h("div",{class:"row rep"},thumb,
+    h("div",{class:"body"},h("div",{style:"font-weight:600;overflow-wrap:anywhere",text:i.name}),
+      h("div",{class:"meta"},h("span",{class:`chip cat-${cat}`,text:catName(cat)}),i.status==="paid"&&i.paidAt?h("span",{text:fmtDate(i.paidAt)}):null,i.unsure&&i.status!=="paid"?h("span",{class:"flag",text:"Под вопросом"}):null,link?h("a",{href:link,target:"_blank",rel:"noopener noreferrer",text:host(link)}):null)),
+    h("div",{class:"price"+(p?"":" none")},p?(i.currency==="USD"?usd(p):gel(p)):"нет цены",p&&i.currency==="USD"&&c.rate?h("small",{text:gel(p*c.rate)}):null));
+}
+function renderReport(){
+  const box=$("ownerView");
+  if(!gotItems)return;
+  const c=compute(items,budget?.transfers||[]);
+  const wasOpen=$("planD")?.open||false;
+  const paid=[...c.paid].sort((a,b)=>String(b.paidAt||"").localeCompare(String(a.paidAt||""))||num(a.order)-num(b.order));
+  const rcSum=receipts.reduce((s,r)=>s+c.toGel({price:r.amount,currency:r.currency}),0);
+  const open=[...c.open].sort((a,b)=>num(a.order)-num(b.order));
+  const reps=items.filter(i=>i.status==="replaced"),removed=items.filter(i=>i.status==="removed");
+  const sec=(title,sub,...kids)=>h("section",{class:"sec"},h("div",{class:"sec-h"},h("h2",{text:title}),sub?h("span",{text:sub}):null),...kids);
+  const list=(rows,empty)=>rows.length?h("div",{class:"rows"},rows):h("div",{class:"empty",text:empty});
+  const planSub=[`в плане ${gel(c.plan)}`,c.noPrice.length?`без цены ${c.noPrice.length}`:null,c.unsure.length?`под вопросом ${c.unsure.length}`:null].filter(Boolean).join(" · ");
+  const planD=h("details",{class:"panel",id:"planD",open:wasOpen},h("summary",{text:`План покупок: ещё ${open.length} товаров`}),h("div",{class:"inner"},h("p",{style:"margin:0 0 8px;color:var(--muted)",text:planSub}),open.length?h("div",{class:"rows"},open.map(i=>reportRow(i,c))):h("span",{text:"Всё куплено."})));
+  box.replaceChildren(...[
+    sec("Куплено",`${paid.length} из ${c.active.length} · ${gel(c.spent)}`,list(paid.map(i=>reportRow(i,c)),"Покупок пока нет. Они появятся здесь после оплаты.")),
+    sec("Корзина с чеками",receipts.length?`${receipts.length} · сумма чеков ${gel(rcSum)}`:"",receipts.length?h("div",{class:"rcs"},sortedReceipts().map(r=>receiptCard(r,false))):h("div",{class:"empty",text:"Чеков пока нет. Они появятся, когда команда их загрузит."})),
+    planD,
+    reps.length||removed.length?sec("Замены и изменения","",h("div",{class:"rows"},[...reps.map(i=>h("div",{class:"row rep",style:"grid-template-columns:minmax(0,1fr)"},h("div",{text:`${i.name} → ${byId(i.replacedBy)?.name||"другой товар"}`}))),...removed.map(i=>h("div",{class:"row rep",style:"grid-template-columns:minmax(0,1fr)"},h("div",{text:`${i.name}: убрано из списка`})))])):null].filter(Boolean));
+}
+
 /* ---------- Actions ---------- */
 async function togglePaid(i){
   if(readOnly)return;
@@ -469,12 +605,12 @@ function openItem(item,opts={}){
   else if(isNew)$("iName").focus();
 }
 function renderPhotos(ro){
-  const p=$("iPhotos");if(!p)return;p.replaceChildren();
+  const p=$(form.boxId||"iPhotos");if(!p)return;p.replaceChildren();
   form.photos.forEach(id=>{const im=h("img",{src:photoUrl(id,300),alt:"Фото покупки",referrerpolicy:"no-referrer",onclick:()=>openLb(id)});
     p.append(h("div",{class:"ph"},im,ro?null:h("button",{type:"button","aria-label":"Убрать фото",text:"×",onclick:()=>{form.photos=form.photos.filter(x=>x!==id);form.removed.push(id);renderPhotos(ro)}})))});
   if(form.uploading)p.append(h("div",{class:"upl",text:"Загружаем…"}));
   if(!ro&&assets&&!form.uploading){
-    const input=h("input",{id:"iFile",type:"file",accept:"image/*",multiple:true,onchange:e=>uploadFiles([...e.target.files])});
+    const input=h("input",{id:form.boxId?"rFile":"iFile",type:"file",accept:"image/*",multiple:true,onchange:e=>uploadFiles([...e.target.files])});
     p.append(h("label",{class:"upl"},"+ Добавить фото",input));
   }
   if(!form.photos.length&&(ro||!assets))p.append(h("span",{class:"lbl",text:ro?"Фото пока нет":"Фото загружаются по ссылке для команды"}));
@@ -492,7 +628,7 @@ async function shrink(file){
 }
 async function uploadFiles(files){
   if(!files.length||!assets)return;
-  const cur=form;const save=$("iSave");
+  const cur=form;const save=$(form.saveId||"iSave");
   cur.uploading+=files.length;if(save)save.disabled=true;renderPhotos(false);
   for(const file of files){
     try{
@@ -640,6 +776,7 @@ function reportText(){
   if(c.paid.length){L.push("","Оплачено:");c.paid.sort((a,b)=>num(a.order)-num(b.order)).forEach(i=>L.push(`• ${i.name}: ${priceStr(i)}${safeLink(i.link)?" "+safeLink(i.link):""}`))}
   const rep=items.filter(i=>i.status==="replaced");
   if(rep.length){L.push("","Замены:");rep.forEach(i=>L.push(`• ${i.name} → ${byId(i.replacedBy)?.name||"другой товар"}`))}
+  if(receipts.length)L.push("",`Чеков загружено: ${receipts.length}`);
   return L.join("\n");
 }
 $("btnReport").onclick=()=>{
@@ -666,7 +803,7 @@ function applyState(st){
   const sig=JSON.stringify(st);
   if(sig===applyState.sig)return;
   applyState.sig=sig;
-  items=st.items;budget={transfers:st.transfers};history=st.history;
+  items=st.items;budget={transfers:st.transfers};history=st.history;receipts=st.receipts||[];
   gotItems=gotBudget=true;render();
 }
 // Local-first writes: the screen updates at once, the queue sends changes in order and in one batch.
@@ -693,8 +830,8 @@ async function refresh(force){
   try{
     const j=await call({op:"read"});
     if(!force&&(sending||queue.length))return;
-    if(j.role!==load.role){load.role=j.role;readOnly=j.role!=="edit";assets=readOnly?null:assetsApi}
-    load.ok=true;applyState(j.state);render.once||(render.once=1,render());
+    if(j.role!==load.role){load.role=j.role;readOnly=j.role!=="edit";assets=readOnly?null:assetsApi;applyState.sig=null}
+    load.ok=true;applyState(j.state);
     return j;
   }catch(e){
     if(e.code==="bad_key"){db=null;load.booting=false;load.message="Эта ссылка больше не действует. Попросите новую.";clearInterval(load.timer);items=[];gotItems=false;render()}
@@ -707,9 +844,9 @@ function docRef(path){
   const[c,id]=path.split("/");
   const local=(d,merge)=>{const i=items.findIndex(x=>x.id===id);const next={...(merge&&i>=0?items[i]:{}),...d,id};if(i>=0)items[i]=next;else items.push(next)};
   return{id,
-    set:async d=>{if(c==="settings"){budget={transfers:d.transfers};enqueue({t:"budget",transfers:d.transfers})}else{local(d,false);enqueue({t:"set",id,data:d})}render()},
+    set:async d=>{if(c==="receipts"){const i=receipts.findIndex(x=>x.id===id);const n={...d,id};if(i>=0)receipts[i]=n;else receipts.push(n);enqueue({t:"rset",id,data:d})}else if(c==="settings"){budget={transfers:d.transfers};enqueue({t:"budget",transfers:d.transfers})}else{local(d,false);enqueue({t:"set",id,data:d})}render()},
     update:async d=>{local(d,true);enqueue({t:"update",id,data:d});render()},
-    delete:async()=>{items=items.filter(x=>x.id!==id);enqueue({t:"delete",id});render()}};
+    delete:async()=>{if(c==="receipts"){receipts=receipts.filter(x=>x.id!==id);enqueue({t:"rdel",id});render();return}items=items.filter(x=>x.id!==id);enqueue({t:"delete",id});render()}};
 }
 const liveDb={doc:docRef,collection:c=>({doc:id=>docRef(c+"/"+(id||newId())),add:async d=>{history=[d,...history];enqueue({t:"log",at:d.at,by:d.by,text:d.text});renderLog()}})};
 const assetsApi={
