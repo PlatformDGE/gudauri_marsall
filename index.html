@@ -51,6 +51,7 @@ h1,h2,h3{margin:0}
 .brand-sep{width:1px;height:38px;background:var(--hero-line)}
 .hero h1{font:700 clamp(16px,3.4vw,21px)/1.2 var(--display)}
 .brand small{display:block;font:400 13px var(--body);color:var(--hero-muted);margin-top:3px}
+.save:empty{display:none}
 .save{font-size:13px;color:var(--hero-muted);align-self:center}
 .save.bad{color:var(--over);font-weight:600}
 .hero-actions{display:flex;flex-wrap:wrap;gap:8px}
@@ -157,7 +158,8 @@ details.panel .inner{padding:0 14px 12px}
 footer{color:var(--muted);font-size:12.5px;text-align:center}
 
 /* Dialogs */
-dialog{border:0;border-radius:16px;background:var(--surface);color:var(--ink);padding:0;width:min(600px,calc(100% - 24px));max-height:92dvh;box-shadow:0 18px 60px rgb(0 0 0 / .35)}
+html:has(dialog[open]){overflow:hidden}
+dialog{overscroll-behavior:contain;border:0;border-radius:16px;background:var(--surface);color:var(--ink);padding:0;width:min(600px,calc(100% - 24px));max-height:92vh;max-height:92dvh;box-shadow:0 18px 60px rgb(0 0 0 / .35)}
 dialog::backdrop{background:rgb(5 20 20 / .55)}
 .dlg{padding:18px;display:grid;gap:14px}
 .dlg h2{font-size:18px;font-weight:700;overflow-wrap:anywhere}
@@ -168,7 +170,7 @@ dialog::backdrop{background:rgb(5 20 20 / .55)}
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 .pricef{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px}
 .check-line{display:flex;gap:8px;align-items:center}
-.err{color:var(--danger);font-weight:500;font-size:14px}
+.err{color:var(--danger);background:color-mix(in srgb,var(--danger) 10%,var(--surface));border-radius:9px;padding:9px 11px;font-weight:500;font-size:14px}
 .btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .btn{border:1px solid var(--line);background:transparent;border-radius:9px;padding:9px 13px;font-weight:500}
 .btn:hover{background:var(--sunk)}
@@ -180,7 +182,7 @@ dialog::backdrop{background:rgb(5 20 20 / .55)}
 .ph{position:relative;width:76px;height:76px;border-radius:10px;overflow:hidden;background:var(--sunk)}
 .ph img{width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in}
 .ph button{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;border:0;background:rgb(0 0 0 / .7);color:#fff;line-height:1;padding:0}
-.upl{display:grid;place-items:center;width:76px;height:76px;border:1px dashed var(--muted);border-radius:10px;color:var(--muted);font-size:12.5px;text-align:center;cursor:pointer;padding:4px}
+.upl{position:relative;display:grid;place-items:center;width:76px;height:76px;border:1px dashed var(--muted);border-radius:10px;color:var(--muted);font-size:12.5px;text-align:center;cursor:pointer;padding:4px}
 .upl input{position:absolute;width:1px;height:1px;opacity:0}
 .upl:focus-within{outline:2px solid var(--accent)}
 .tr{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
@@ -194,9 +196,41 @@ dialog::backdrop{background:rgb(5 20 20 / .55)}
 @media (max-width:640px){
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .hero{padding:16px}
+  .hero-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}
+  .hero-actions:not(:has(button:not([hidden]))){display:none}
+  .save{grid-column:1/-1}
+  .ghost{padding:10px 8px;font-size:14px;min-height:42px}
+  .left-val{font-size:clamp(28px,9vw,38px)}
+  .tool-row{gap:8px}
+  .seg{display:flex;width:100%}
+  .seg button{flex:1 1 auto;min-height:40px;padding:6px 8px}
+  button.chip{padding:8px 12px}
+  .rate-need button{min-height:40px;padding:6px 12px}
+  .row{-webkit-tap-highlight-color:transparent}
+  .check{width:36px;height:36px;border-radius:10px}
+  .row .price{grid-column:3;grid-row:2;text-align:left;font-size:14.5px;margin-top:-4px}
+  .row .price small{display:inline;margin-left:6px}
+  .row .price.none{display:none}
+  .row.rep .price{grid-column:2}
+  .group-h span,.sec-h span{font-size:12.5px}
+  input,select,textarea{font-size:16px!important}
+  .f input,.f select,.f textarea{min-height:44px}
+  .f input[type=date]{-webkit-appearance:none;appearance:none;display:block;text-align:left;width:100%}
+  .two{grid-template-columns:minmax(0,1fr)}
+  dialog:not(#lb){width:100%;max-width:100%;margin:auto 0 0;border-radius:18px 18px 0 0;max-height:94vh;max-height:94dvh}
+  .dlg{padding:18px max(16px,env(safe-area-inset-left,0px)) 0}
+  .dlg>.btns:last-child{position:sticky;bottom:0;background:var(--surface);margin-inline:-16px;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);z-index:2}
+  .dlg>.btns:last-child .btn{flex:1 1 40%;min-height:44px}
+  .dlg>.btns:last-child .lbl{flex:1 1 100%;margin:0}
+  .push{margin-left:0}
+  .ph,.upl{width:84px;height:84px}
+  .ph button{width:28px;height:28px}
+  .pick label{min-height:36px}
+  .brand img{height:34px}
   .brand-sep{display:none}
   .brand{gap:8px}
-  .row{grid-template-columns:28px 44px minmax(0,1fr) auto;gap:8px;padding-inline:10px}
+  .row{grid-template-columns:36px 44px minmax(0,1fr);gap:4px 10px;padding-inline:10px}
+  .row.rep{grid-template-columns:44px minmax(0,1fr)}
   .thumb{width:44px;height:44px}
   .add-wrap{margin-left:0;width:100%}.add,.add2{flex:1 1 140px}
 }
@@ -250,6 +284,8 @@ const ROOMS=["Спальня","Кухня","Ванная","Прихожая","Х
 const catName=k=>(CATS.find(c=>c[0]===k)||CATS[7])[1];
 const $=id=>document.getElementById(id);
 const num=v=>{if(v===null||v===undefined||v==="")return 0;const n=typeof v==="number"?v:parseFloat(String(v).replace(/\s/g,"").replace(",","."));return Number.isFinite(n)?n:0};
+// Prices may be typed as 1200, 1 200, 89,90, 1.200,50 or 1,200.50
+const money=v=>{let t=String(v??"").replace(/[\s\u00a0₾$]/g,"");if(/^\d{1,3}([.,]\d{3})+$/.test(t))t=t.replace(/[.,]/g,"");else{const i=Math.max(t.lastIndexOf(","),t.lastIndexOf("."));if(i>=0)t=t.slice(0,i).replace(/[.,]/g,"")+"."+t.slice(i+1)}return/^\d*\.?\d+$/.test(t)?parseFloat(t):NaN};
 const round=n=>Math.round(n*100)/100;
 const nf=new Intl.NumberFormat("ru-RU",{maximumFractionDigits:2});
 const nfRate=new Intl.NumberFormat("ru-RU",{maximumFractionDigits:4});
@@ -291,7 +327,7 @@ let prefs={group:"room",status:"all",cats:[]};
 try{Object.assign(prefs,JSON.parse(localStorage.getItem("gud-prefs")||"{}"))}catch{}
 const savePrefs=()=>{try{localStorage.setItem("gud-prefs",JSON.stringify(prefs))}catch{}};
 
-function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,3500)}
+function toast(t){const e=$("toast");(document.querySelector("dialog[open]")||document.body).append(e);e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,3500)}
 function setReadOnly(){if(readOnly)return;readOnly=true;render()}
 async function write(fn){
   try{return await fn()}catch(e){
@@ -311,6 +347,7 @@ function render(){
   $("teamView").hidden=role!=="edit";
   $("ownerView").hidden=role!=="view";
   $("btnReport").hidden=role!=="edit";
+  $("meLine").hidden=role!=="edit";
   $("brandSub").textContent=role==="view"?"Отчёт для собственника":"Покупки и бюджет квартиры";
   renderHero();
   if(role==="view")renderReport();
@@ -331,14 +368,16 @@ function renderHero(){
     need.append(h("span",{text:readOnly?`${usd(sum)} ещё не в бюджете: курс перевода пока не указан.`:`${usd(sum)} ещё не в бюджете: впишите курс на день перевода, и сумма пересчитается в лари.`}));
     if(!readOnly)need.append(h("button",{type:"button",text:"Вписать курс",onclick:openBudget}));
   }
-  const scale=Math.max(c.budgetGel,c.spent+c.plan)||1;
+  const noBudget=!(c.budgetGel>0);
+  const scale=noBudget?Infinity:Math.max(c.budgetGel,c.spent+c.plan)||1;
   const meter=h("div",{class:"meter",role:"img","aria-label":`Оплачено ${gel(c.spent)}, в плане ${gel(c.plan)}, бюджет ${gel(c.budgetGel)}`},
     h("i",{class:"p",style:`width:${c.spent/scale*100}%`}),h("i",{class:"l",style:`width:${c.plan/scale*100}%`}),
     c.spent+c.plan>c.budgetGel&&c.budgetGel>0?h("i",{class:"tick",style:`left:calc(${c.budgetGel/scale*100}% - 1px)`}):null);
   const rateTxt=c.fixed.map(t=>`${fmtDate(t.date)||"Перевод"}: ${usd(num(t.usd))} × ${nfRate.format(num(t.rate))} = ${gel(num(t.usd)*num(t.rate))}`);
   const toUsd=n=>c.rate?` (${usd(n/c.rate)})`:"";
   const v=h("div",{class:"verdict"});
-  if(c.budgetGel>0||c.spent+c.plan>0){
+  if(noBudget){if(c.pending.length||c.spent+c.plan>0)v.append(h("strong",{text:"Остаток посчитается, когда будет указан курс перевода"}))}
+  else{
     if(c.after<0)v.append(h("strong",{class:"bad",text:`Не хватает ${gel(-c.after)}${toUsd(-c.after)} на товары в плане`}));
     else v.append(h("strong",{text:`После товаров в плане останется ${gel(c.after)}${toUsd(c.after)}`}));
   }
@@ -349,7 +388,7 @@ function renderHero(){
   if(c.unconverted)v.append(h("span",{class:"note",text:"Товары в долларах не посчитаны: нет курса."}));
   b.append(h("div",{style:"display:grid;gap:14px"},
     h("div",{},h("div",{class:"left-label",text:"Осталось денег"}),
-      h("div",{class:"left-val"+(c.left<0?" bad":""),text:c.budgetGel>0||c.spent?gel(c.left):"—"}),
+      h("div",{class:"left-val"+(!noBudget&&c.left<0?" bad":""),text:noBudget?"—":gel(c.left)}),
       h("div",{class:"left-sub",text:c.budgetGel>0?`${usd(c.left/c.rate)} · куплено ${c.paid.length} из ${c.active.length}`:`куплено ${c.paid.length} из ${c.active.length}`})),
     meter,
     h("div",{class:"stats"},
@@ -463,11 +502,12 @@ function openReceipt(r){
   const isNew=!r;const base=r||{date:today(),shop:"",amount:null,currency:"GEL",photos:[],items:[],note:""};
   form={receipt:r,isNew,photos:[...(base.photos||[])],fresh:[],removed:[],uploading:0,boxId:"rPhotos",saveId:"rSave"};
   const f=$("fReceipt");f.replaceChildren();
-  const paid=items.filter(i=>i.status==="paid").sort((a,b)=>String(b.paidAt||"").localeCompare(String(a.paidAt||""))||num(a.order)-num(b.order));
+  const paid=items.filter(i=>i.status==="paid"||(base.items||[]).includes(i.id)).sort((a,b)=>String(b.paidAt||"").localeCompare(String(a.paidAt||""))||num(a.order)-num(b.order));
   const inOther=id=>receipts.find(x=>x.id!==(r&&r.id)&&(x.items||[]).includes(id));
   const pick=paid.length?h("div",{class:"pick"},paid.map(i=>{const o=inOther(i.id);return h("label",{},h("input",{type:"checkbox",value:i.id,checked:(base.items||[]).includes(i.id),"data-pick":"1"}),h("span",{},i.name,h("small",{text:priceStr(i)+(i.paidAt?" · "+fmtDate(i.paidAt):"")+(o?` · уже в чеке «${o.shop||fmtDate(o.date)}»`:"")})))})):h("span",{class:"lbl",text:"Здесь появятся товары, отмеченные как оплаченные."});
   const del=!isNew?h("button",{type:"button",class:"btn danger push",text:"Удалить чек",onclick:()=>{if(del.dataset.arm)deleteReceipt(r);else{del.dataset.arm="1";del.textContent="Точно удалить?"}}}):null;
   f.append(h("h2",{text:isNew?"Новый чек":"Чек"}),
+    h("div",{class:"err",id:"rErr",role:"alert",hidden:true}),
     h("div",{class:"f"},h("span",{class:"lbl",text:"Фото чека"}),h("div",{class:"photos",id:"rPhotos"})),
     h("div",{class:"two"},
       h("label",{class:"f"},h("span",{text:"Дата"}),h("input",{id:"rDate",type:"date",value:base.date||today()})),
@@ -475,18 +515,17 @@ function openReceipt(r){
     h("div",{class:"f"},h("span",{text:"Сумма чека (для сверки, из бюджета отдельно не списывается)"}),h("div",{class:"pricef"},h("input",{id:"rAmount",inputmode:"decimal",value:base.amount??"",placeholder:"0","aria-label":"Сумма чека"}),h("select",{id:"rCur","aria-label":"Валюта"},h("option",{value:"GEL",selected:base.currency!=="USD",text:"₾"}),h("option",{value:"USD",selected:base.currency==="USD",text:"$"})))),
     h("div",{class:"f"},h("span",{class:"lbl",text:"Какие товары в этом чеке (необязательно)"}),pick),
     h("label",{class:"f"},h("span",{text:"Заметка"}),h("textarea",{id:"rNote",rows:"2"},base.note||"")),
-    h("div",{class:"err",id:"rErr",role:"alert",hidden:true}),
     h("div",{class:"btns"},h("button",{type:"submit",class:"btn primary",id:"rSave",text:isNew?"Добавить чек":"Сохранить"}),h("button",{type:"button",class:"btn",text:"Отмена",onclick:()=>cancelReceipt()}),del));
   f.onsubmit=e=>{e.preventDefault();saveReceipt()};
   renderPhotos(false);
   $("dReceipt").showModal();
 }
-function cancelReceipt(){(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}));$("dReceipt").close()}
-$("dReceipt").addEventListener("cancel",()=>{(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}))});
+function cancelReceipt(){if(form)form.closed=true;(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}));$("dReceipt").close()}
+$("dReceipt").addEventListener("cancel",()=>{if(form)form.closed=true;(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}))});
 async function saveReceipt(){
-  const err=$("rErr");const fail=t=>{err.textContent=t;err.hidden=false};
+  const err=$("rErr");const fail=t=>{err.textContent=t;err.hidden=false;$("dReceipt").scrollTop=0};
   if(!form.photos.length)return fail("Добавьте хотя бы одно фото чека.");
-  const raw=$("rAmount").value.trim();const amount=raw?num(raw):null;
+  const raw=$("rAmount").value.trim();const amount=raw?money(raw):null;
   if(raw&&!(amount>0))return fail("Сумма должна быть числом больше нуля, например 1250 или 89,90.");
   const cur=form;const ref=db.collection("receipts").doc(cur.receipt?cur.receipt.id:undefined);
   const data={date:$("rDate").value||today(),shop:$("rShop").value.trim(),amount,currency:$("rCur").value,photos:cur.photos,items:[...document.querySelectorAll("#fReceipt [data-pick]:checked")].map(x=>x.value),note:$("rNote").value.trim(),updatedBy:me};
@@ -549,6 +588,7 @@ async function togglePaid(i){
 }
 function openLb(id){$("lbImg").src=photoUrl(id,1600);$("lb").showModal()}
 $("lbClose").onclick=()=>$("lb").close();
+$("lb").addEventListener("click",e=>{if(e.target===$("lb"))$("lb").close()});
 
 let form=null;
 function openItem(item,opts={}){
@@ -596,12 +636,12 @@ function openItem(item,opts={}){
       btns.append(del);
     }
   }
-  f.append(h("h2",{text:title}),fs,err,btns);
+  f.append(h("h2",{text:title}),err,fs,btns);
   f.onsubmit=e=>{e.preventDefault();saveItem()};
   if(!arch)syncStatus();else paidWrap.hidden=true;
   renderPhotos(ro);
   $("dItem").showModal();
-  if(opts.forcePaid){err.textContent="Впишите цену, чтобы списать покупку с бюджета.";err.hidden=false;$("iPrice").focus()}
+  if(opts.forcePaid){err.textContent="Впишите цену, чтобы списать покупку с бюджета.";err.hidden=false;$("iPrice").focus({preventScroll:true});$("iPrice").scrollIntoView({block:"center"})}
   else if(isNew)$("iName").focus();
 }
 function renderPhotos(ro){
@@ -641,19 +681,21 @@ async function uploadFiles(files){
     }
     cur.uploading--;
   }
+  if(cur.closed){cur.fresh.forEach(id=>assets?.delete(id).catch(()=>{}));cur.fresh=[];return}
   if(form===cur){if(save)save.disabled=false;renderPhotos(false)}
 }
 function cancelItem(){
+  if(form)form.closed=true;
   (form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}));
   $("dItem").close();
 }
-$("dItem").addEventListener("cancel",()=>{(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}))});
+$("dItem").addEventListener("cancel",()=>{if(form)form.closed=true;(form?.fresh||[]).forEach(id=>assets?.delete(id).catch(()=>{}))});
 async function saveItem(){
-  const err=$("iErr");const fail=t=>{err.textContent=t;err.hidden=false};
+  const err=$("iErr");const fail=t=>{err.textContent=t;err.hidden=false;$("dItem").scrollTop=0};
   const name=$("iName").value.trim();
   if(!name)return fail("Впишите название товара.");
   const priceRaw=$("iPrice").value.trim();
-  const price=priceRaw?num(priceRaw):null;
+  const price=priceRaw?money(priceRaw):null;
   if(priceRaw&&!(price>0))return fail("Цена должна быть числом больше нуля, например 1250 или 89,90.");
   const linkRaw=$("iLink").value.trim();
   const link=safeLink(linkRaw);
@@ -675,7 +717,7 @@ async function saveItem(){
         await write(()=>db.doc("items/"+cur.replace.id).update({status:"replaced",replacedBy:ref.id,updatedAt:now,updatedBy:me}));
         log(`${cur.replace.name}: заменено на «${name}» (${priceStr(data)})`);
       }else log(`Добавлено: ${name} (${priceStr(data)})`);
-      if(status==="paid"&&!cur.replace)log(`${name}: оплачено ${priceStr(data)}`);
+      if(status==="paid")log(`${name}: оплачено ${priceStr(data)}`);
     }else{
       const o=cur.item,parts=[];
       await write(()=>db.doc("items/"+o.id).update(data));
@@ -717,10 +759,10 @@ function drawBudget(){
   const f=$("fBudget");f.replaceChildren();
   const rows=h("div",{style:"display:grid;gap:10px"});
   const totals=h("div",{class:"tr-out"});
-  const refresh=()=>{const c=compute([],trs);totals.textContent=c.budgetGel?`Итого бюджет: ${gel(c.budgetGel)} (${usd(c.budgetUsd)})`:"Итого бюджет появится, когда вписан курс."};
+  const refresh=()=>{const c=compute([],trs.map(t=>({...t,usd:money(t.usd)||0})));totals.textContent=c.budgetGel?`Итого бюджет: ${gel(c.budgetGel)} (${usd(c.budgetUsd)})`:"Итого бюджет появится, когда вписан курс."};
   trs.forEach((t,ix)=>{
     const out=h("div",{class:"tr-out"});
-    const calc=()=>{const u=num(t.usd),r=num(t.rate);out.className="tr-out"+(u&&r?"":" pending");out.textContent=u&&r?`${usd(u)} × ${nfRate.format(r)} = ${gel(u*r)}`:"Без курса сумма не входит в бюджет";refresh()};
+    const calc=()=>{const u=money(t.usd)||0,r=num(t.rate);out.className="tr-out"+(u&&r?"":" pending");out.textContent=u&&r?`${usd(u)} × ${nfRate.format(r)} = ${gel(u*r)}`:"Без курса сумма не входит в бюджет";refresh()};
     const inp=(k,lab,extra)=>h("label",{class:"f"},h("span",{text:lab}),h("input",{id:`b-${t.id}-${k}`,value:t[k]??"",...extra,oninput:e=>{t[k]=e.target.value;calc()}}));
     const del=h("button",{type:"button",class:"btn danger",text:"Убрать перевод",onclick:()=>{if(del.dataset.arm){trs.splice(ix,1);drawBudget()}else{del.dataset.arm="1";del.textContent="Точно убрать?"}}});
     rows.append(h("div",{class:"tr"},
@@ -730,11 +772,11 @@ function drawBudget(){
     calc();
   });
   const err=h("div",{class:"err",id:"bErr",role:"alert",hidden:true});
-  f.append(h("h2",{text:"Бюджет и курс"}),
+  f.append(h("h2",{text:"Бюджет и курс"}),err,
     h("p",{style:"margin:0;color:var(--muted)"},"Курс фиксируется один раз на день перевода, от него считается бюджет в лари. Посмотреть официальный курс: ",h("a",{href:"https://nbg.gov.ge",target:"_blank",rel:"noopener noreferrer",text:"Нацбанк Грузии"}),". Любая правка курса попадает в историю."),
     rows,
     h("div",{class:"btns"},h("button",{type:"button",class:"btn",text:"+ Ещё перевод",onclick:()=>{trs.push({id:"t"+Date.now(),usd:"",rate:"",date:today(),note:""});drawBudget()}})),
-    totals,err,
+    totals,
     h("div",{class:"btns"},h("button",{type:"submit",class:"btn primary",text:"Сохранить"}),h("button",{type:"button",class:"btn",text:"Отмена",onclick:()=>$("dBudget").close()})));
   f.onsubmit=e=>{e.preventDefault();saveBudget()};
   refresh();
@@ -743,10 +785,10 @@ async function saveBudget(){
   const err=$("bErr");
   const next=[];
   for(const t of trs){
-    const u=num(t.usd),rawR=String(t.rate??"").trim(),r=num(rawR);
-    if(!(u>0)){err.textContent="В каждом переводе нужна сумма больше нуля.";err.hidden=false;return}
-    if(rawR&&!(r>0)){err.textContent="Курс должен быть числом, например 2,70.";err.hidden=false;return}
-    if(r&&(r<0.5||r>20)){err.textContent="Проверьте курс: это сколько лари стоит 1 доллар.";err.hidden=false;return}
+    const u=money(t.usd),rawR=String(t.rate??"").trim(),r=num(rawR);
+    if(!(u>0)){err.textContent="В каждом переводе нужна сумма больше нуля.";err.hidden=false;$("dBudget").scrollTop=0;return}
+    if(rawR&&!(r>0)){err.textContent="Курс должен быть числом, например 2,70.";err.hidden=false;$("dBudget").scrollTop=0;return}
+    if(r&&(r<0.5||r>20)){err.textContent="Проверьте курс: это сколько лари стоит 1 доллар.";err.hidden=false;$("dBudget").scrollTop=0;return}
     next.push({id:t.id,usd:u,rate:r||null,date:t.date||(r?today():null),note:(t.note||"").trim()});
   }
   const old=budget?.transfers||[];
@@ -770,8 +812,10 @@ function reportText(){
   const c=compute(items,budget?.transfers||[]);
   const L=[`Закупка, квартира в Гудаури. На ${new Date().toLocaleDateString("ru-RU")}`,""];
   c.fixed.forEach(t=>L.push(`Перевод ${fmtDate(t.date)}: ${usd(num(t.usd))} по курсу ${nfRate.format(num(t.rate))} = ${gel(num(t.usd)*num(t.rate))}`));
-  L.push(`Бюджет: ${gel(c.budgetGel)}`,`Оплачено: ${gel(c.spent)} (${c.paid.length} из ${c.active.length} товаров)`,`Осталось: ${gel(c.left)}`,`В плане: ${gel(c.plan)}`);
-  if(c.after<0)L.push(`Не хватает: ${gel(-c.after)}${c.rate?` (${usd(-c.after/c.rate)})`:""}`);
+  L.push(c.budgetGel>0?`Бюджет: ${gel(c.budgetGel)}`:"Бюджет: курс перевода пока не указан",`Оплачено: ${gel(c.spent)} (${c.paid.length} из ${c.active.length} товаров)`);
+  if(c.budgetGel>0)L.push(`Осталось: ${gel(c.left)}`);
+  L.push(`В плане: ${gel(c.plan)}`);
+  if(c.budgetGel>0&&c.after<0)L.push(`Не хватает: ${gel(-c.after)}${c.rate?` (${usd(-c.after/c.rate)})`:""}`);
   if(c.noPrice.length)L.push(`Ещё без цены: ${c.noPrice.length}`);
   if(c.paid.length){L.push("","Оплачено:");c.paid.sort((a,b)=>num(a.order)-num(b.order)).forEach(i=>L.push(`• ${i.name}: ${priceStr(i)}${safeLink(i.link)?" "+safeLink(i.link):""}`))}
   const rep=items.filter(i=>i.status==="replaced");
@@ -794,7 +838,8 @@ const key=(location.hash.match(/k=([\w-]+)/)||[])[1]||"";
 const API=window.GM_API||"";
 function setSave(t,bad){const e=$("saveState");e.textContent=t;e.className="save"+(bad?" bad":"")}
 async function call(body){
-  const res=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({key,...body})});
+  const payload=JSON.stringify({key,...body});
+  const res=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:payload,keepalive:payload.length<60000});
   const j=await res.json();
   if(!j.ok){const e=new Error(j.code||"error");e.code=j.code;throw e}
   return j;
@@ -808,7 +853,8 @@ function applyState(st){
 }
 // Local-first writes: the screen updates at once, the queue sends changes in order and in one batch.
 let queue=[],sending=false,flushT=null;
-function enqueue(op){queue.push(op);setSave("Сохраняем…");clearTimeout(flushT);flushT=setTimeout(flush,150)}
+let writeGen=0;
+function enqueue(op){writeGen++;queue.push(op);setSave("Сохраняем…");clearTimeout(flushT);flushT=setTimeout(flush,150)}
 async function flush(){
   if(sending||!queue.length)return;
   sending=true;const ops=queue;queue=[];
@@ -822,14 +868,16 @@ async function flush(){
     sending=false;
     setSave("Не сохранилось",true);
     toast(e.code==="forbidden"?"По этой ссылке можно только смотреть":"Изменения не сохранились. Проверьте интернет и повторите");
-    applyState.sig=null;refresh(true);
+    applyState.sig=null;
+    if(queue.length)flush();else refresh(true);
   }
 }
 async function refresh(force){
   if(!force&&(sending||queue.length||document.hidden))return;
+  const gen=writeGen;
   try{
     const j=await call({op:"read"});
-    if(!force&&(sending||queue.length))return;
+    if(gen!==writeGen||sending||queue.length)return; // the answer is older than a newer change
     if(j.role!==load.role){load.role=j.role;readOnly=j.role!=="edit";assets=readOnly?null:assetsApi;applyState.sig=null}
     load.ok=true;applyState(j.state);
     return j;
@@ -862,7 +910,8 @@ $("fName").onsubmit=e=>{e.preventDefault();me=$("nameInput").value.trim()||null;
 $("nameSkip").onclick=()=>{try{localStorage.setItem("gud-name","-")}catch{}$("dName").close()};
 $("btnName").onclick=askName;
 window.addEventListener("beforeunload",e=>{if(sending||queue.length){e.preventDefault();e.returnValue=""}});
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){clearTimeout(flushT);flush()}else refresh()});
+window.addEventListener("pagehide",()=>{clearTimeout(flushT);flush()});
 async function load(){
   load.booting=true;render();
   if(!API||API.startsWith("__")){load.booting=false;load.message="Сайт ещё настраивается: скрипт таблицы пока не подключён.";render();return}
@@ -874,7 +923,6 @@ async function load(){
   load.booting=false;
   if(!j){render();if(db)load.timer=setInterval(()=>refresh(load.ok?false:true),30000);return}
   load.timer=setInterval(()=>refresh(),30000);
-  $("meLine").hidden=readOnly;
   if(!readOnly&&saved===null)askName();
   render();
 }
